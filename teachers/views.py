@@ -4,10 +4,12 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from rest_framework import status
 from . models import teachers
 from . serializers import teacherSerializer
+from rest_framework.decorators import api_view
+from rest_framework.decorators import parser_classes
+from rest_framework.parsers import JSONParser
 # Create your views here.
 
 @api_view(['GET'])
@@ -22,18 +24,17 @@ def getId(request,pk):
     serializer=teacherSerializer(res,many=False)
     return Response(serializer.data)
 
-@api_view(['GET'])
+@api_view(['POST'])
+@parser_classes([JSONParser])
 def login(request):
     try:
-        email = request.GET['email']
-        password = request.GET['password']
+        email = request.data['email']
+        password = request.data['password']
         res= teachers.objects.get(email=email,password=password)
         serializer=teacherSerializer(res,many=False)
         return Response(serializer.data)
     except Exception as e:
         return Response('User Not Found')
-
-
 
 
 @api_view(['POST'])
