@@ -44,3 +44,14 @@ def post(request):
         serializer.save()
         return Response(serializer.data,status=200)
     return Response(serializer.errors,status=400)
+
+@api_view(['PUT'])
+@parser_classes([JSONParser])
+def update(request):
+    id = request.data['id']
+    res= teachers.objects.get(id=id)
+    serializer=teacherSerializer(res,data=request.data)
+    if(serializer.is_valid()):
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors,status=400)
